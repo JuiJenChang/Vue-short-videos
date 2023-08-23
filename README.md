@@ -6,6 +6,7 @@
 * pause video
 * auto play when Swipe video up and down
 * Stop video Progress When switch between different videos or categories
+* Neither vue3-video-play nor videojs can play videos on mobile devices
 
 ## Used technologies
 * vue3
@@ -14,6 +15,7 @@
 * axios
 * vant
 * vue3-video-play
+* videojs
 
 ## Project setup
 ```

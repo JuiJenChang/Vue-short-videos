@@ -13,7 +13,7 @@
               v-for="item in followingListStore.list"
               :key="item.cover"
             >
-              <videoPlay
+              <!-- <videoPlay
                 ref="followingVideoPlayRef"
                 v-bind="options"
                 :src="item.play_url"
@@ -23,7 +23,22 @@
                 @pause="onPause"
                 @timeupdate="onTimeupdate"
                 @canplay="onCanplay"
-              />
+              /> -->
+              <video
+                v-if="followingListStore.list.length"
+                :id="`video-${item.title}`"
+                class="video-js vjs-default-skin vjs-big-play-centered"
+                :poster="item.cover"
+                :autoplay="false"
+                controls
+                muted
+                playsinline
+                preload="auto"
+                style="width: 100%; height: 100%"
+                crossorigin="anonymous"
+              >
+                <source :src="item.play_url" type="application/x-mpegURL" />
+              </video>
             </Swipe-item>
           </Swipe>
         </Tab>
@@ -36,6 +51,10 @@
                 :src="item.play_url"
                 :title="item.title"
                 :poster="item.cover"
+                @play="onPlay"
+                @pause="onPause"
+                @timeupdate="onTimeupdate"
+                @canplay="onCanplay"
               />
             </Swipe-item>
           </Swipe>
@@ -55,12 +74,34 @@ import { Tab, Tabs, Swipe, SwipeItem } from "vant";
 import "vue3-video-play/dist/style.css";
 import { videoPlay } from "vue3-video-play";
 
+import videojs from "video.js";
+import "video.js/dist/video-js.css";
+import "videojs-contrib-hls";
+
 const followingListStore = followingList();
 const forYouListStore = forYouList();
 
+const initVideoPlayer = (data) => {
+  data.forEach((item) => {
+    videojs(`video-${item.title}`);
+  });
+};
+
+const getfollowingData = async () => {
+  try {
+    const response = await followingListStore.getFollowingListAction();
+    initVideoPlayer(response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 onMounted(() => {
   if (!followingListStore.list.length) {
-    followingListStore.getFollowingListAction();
+    // followingListStore.getFollowingListAction();
+    setTimeout(() => {
+      getfollowingData();
+    });
   }
   if (!forYouListStore.list.length) {
     forYouListStore.getForYouListAction();
@@ -113,13 +154,14 @@ const followingVideoPlayRef = ref(null);
 const forYouVideoPlayRef = ref(null);
 
 const changeFollowingVideo = (index) => {
-  followingVideoPlayRef.value.forEach((item, i) => {
-    if (index === i) {
-      item.play();
-    } else {
-      item.pause();
-    }
-  });
+  console.log(index);
+  // followingVideoPlayRef.value.forEach((item, i) => {
+  //   if (index === i) {
+  //     item.play();
+  //   } else {
+  //     item.pause();
+  //   }
+  // });
 };
 
 const changeForYouVideo = (index) => {

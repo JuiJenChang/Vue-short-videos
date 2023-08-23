@@ -15,6 +15,7 @@ const followingList = defineStore("followingList", {
           response.data.items.length
         ) {
           this.list = response.data.items;
+          return response.data.items;
         }
       } catch (err) {
         console.log(err);
